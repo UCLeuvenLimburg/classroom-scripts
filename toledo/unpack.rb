@@ -4,8 +4,8 @@ require 'fileutils'
 
 def extract_student_name(filename, contents)
   first_line = contents.lines[0].strip
-  /^Name: (.*) \(q\d+\)$/ =~ first_line or abort "Could not extract student name from #{filename}"
-  name = $1
+  /^(Name|Naam): (.*) \(q\d+\)$/ =~ first_line or abort "Could not extract student name from #{filename}"
+  name = $2
 
   parts = name.split(/ /)
   fname = parts[0]
@@ -30,7 +30,7 @@ Zip::File.open(ARGV[0]) do |zip|
   qtable = {}
   
   zip.each do |entry|
-    if /_(q\d{7})_attempt_\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}\.txt$/ =~ entry.name
+    if /_(q\d{7})_(poging|attempt)_\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}\.txt$/ =~ entry.name
       qid = $1
 
       contents = entry.get_input_stream.read
